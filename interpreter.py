@@ -1,0 +1,101 @@
+import sys
+if len(sys.argv) != 2:
+    print("interpreter takes one (1) microstack program as input")
+    sys.exit()
+
+program = open(sys.argv[1], 'r')
+print(f"Interpreting {program.name}:")
+program_string = program.read()
+program = program_string
+print(program)
+instruction = ""
+
+s = []
+
+
+def step(p):
+    return bin_eight_bit(p[:1]), p[1:]
+
+
+def push(n):
+    s.append(n)
+
+
+def outpopint():
+    n = s.pop() if s != [] else 0
+    print(n, end='')
+    return int(n)
+
+
+def outpopuni():
+    n = s.pop() if s != [] else 0
+    print(chr(n), end='')
+    return int(n)
+
+
+def bin_eight_bit(char):
+    bin_char = bin(ord(char))[2:]
+    return (8-len(bin_char))*'0'+bin_char
+
+while program_string != "":
+    char_bin, program_string = step(program_string)
+
+    part1, part2 = char_bin[:4], char_bin[4:]
+    if part1 == "0000":
+        nb_length=(int(part2, base=2)//4)+1
+        number = ""
+        for _ in range(nb_length):                      #TODO
+            bits, program_string = step(program_string) #
+            number += bits                              #
+        push(int(number, base=2))
+    else:
+        match instruction:
+            case "0000":
+                
+            case "0001":
+                pass
+            case "0010":
+                a = s.pop()
+                b = s.pop()
+                push(a+b)
+            case "0011":
+                a = s.pop()
+                b = s.pop()
+                push(b-a)
+            case "0100":
+                a = s.pop()
+                b = s.pop()
+                push(a*b)
+            case "0101":
+                a = s.pop()
+                b = s.pop()
+                push(b//a)
+            case "0110":
+                a = s.pop()
+                b = s.pop()
+                push(a)
+                push(b)
+            case "0111":
+                a = s.pop()
+                push(a)
+                push(a)
+            case "1000":
+                pass
+            case "1001":
+                pass
+            case "1010":
+                pass
+            case "1011":
+                pass
+            case "1100":
+                n = outpopint()
+                push(n)
+            case "1101":
+                n = outpopuni()
+                push(n)
+            case "1110":
+                outpopint()
+            case "1111":
+                outpopuni()
+            case other:
+                pass

@@ -3,9 +3,9 @@
 
 ### Description
 
-Microstack uses two stacks as storage.
+Microstack uses two stacks as memory.
 
-Every instruction is an operation one of those stacks.
+Every instruction is an operation on one of those stacks.
 
 In a microstack program, each character (roughly) represents two instructions.
 For example, `/`, U+002F, represents instructions `2` and `f`

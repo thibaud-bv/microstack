@@ -46,5 +46,4 @@ There currently is a need for interaction between stacks.
 - `f`: output the top of the stack as unicode and pop
 
 ### file extensions
-- .mk   : **m**icrostac**k** program
-- .mkw  :
+- .µ    : microstack program

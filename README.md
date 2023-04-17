@@ -3,36 +3,48 @@
 
 ### Description
 
-Microstack uses one stack as storage.
+Microstack uses two stacks as storage.
 
-Every instruction is an operation on that stack.
+Every instruction is an operation one of those stacks.
 
-In a microstack program, each character represents two instructions (except one).
-For example, `/`, U+002F, 00101111 in binary, represents instructions 0010 and 1111
+In a microstack program, each character (roughly) represents two instructions.
+For example, `/`, U+002F, represents instructions `2` and `f`
 
-### Instruction set (in binary)
+### Interpreter
 
-- 0000 numb (0N): push the next numb+1bit integer to the stack
-    numb+1 must be 4, 8, 12 or 16
+Not working yet.
+
+Some instructions will probably change.
+
+There currently is a need for interaction between stacks.
+
+### Instruction set (in hexadecimal)
+
+- `0x`: push the next `x`+1bit integer to the stack
+
+    `x` can only be `3`, `7`, `b` or `f`
+
     Example:
-    Push the 15+1bit number 35770 to the stack
-    - 0000 1111 1000 1011 1011 1010
-- 0001 (1):
-- 0010 (2): add top and second, pop both, push result
-- 0011 (3): sub top from second, pop both, push result
-- 0100 (4): mult top and second, pop both, push result
-- 0101 (5): div top from second, pop both, push result
-- 0110 (6): swap top and second
-- 0111 (7): push top on the stack (duplicate top)
-- 1000 (8): 
-- 1001 (9):
-- 1010 (a):
-- 1011 (b):
-- 1100 (c): output the top of the stack
-- 1101 (d): output the top of the stack as unicode
-- 1110 (e): output the top of the stack and pop
-- 1111 (f): output the top of the stack as unicode and pop
 
-### extensions:
-- .    : microstack program written as characters
-- .bms : microstack program written in binary
+    ```0f8bba```
+
+    Pushes the `f`+1bit integer 35770 to the stack
+- `1`: pop top, factorial, push result
+- `2`: add top and second, pop both, push result
+- `3`: sub top from second, pop both, push result
+- `4`: mult top and second, pop both, push result
+- `5`: div top from second, pop both, push result
+- `6`: swap top and second
+- `7`: push top on the stack (duplicate top)
+- `8`: go to matching `9` if top is 0 (Like a bf `[`)
+- `9`: go to matching `8` if top is not 0 (Like a bf `]`)
+- `a`: push input
+- `b`: switch to other stack
+- `c`: output the top of the stack
+- `d`: output the top of the stack as unicode
+- `e`: output the top of the stack and pop
+- `f`: output the top of the stack as unicode and pop
+
+### file extensions
+- .mk   : **m**icrostac**k** program
+- .mkw  :

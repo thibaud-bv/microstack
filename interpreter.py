@@ -7,14 +7,16 @@ program = open(sys.argv[1], 'r')
 print(f"Interpreting {program.name}:")
 program_string = program.read()
 program = program_string
+program_pointer = 0
 print(program)
 instruction = ""
 
 s = []
+s2 = []
 
 
 def step(p):
-    return bin_eight_bit(p[:1]), p[1:]
+    return hex(p[:1])[:2], p[1:]
 
 
 def push(n):
@@ -33,69 +35,67 @@ def outpopuni():
     return int(n)
 
 
-def bin_eight_bit(char):
-    bin_char = bin(ord(char))[2:]
-    return (8-len(bin_char))*'0'+bin_char
+getting_number = False
+parts_left = 0
+number = ""
 
 while program_string != "":
     char_bin, program_string = step(program_string)
 
-    part1, part2 = char_bin[:4], char_bin[4:]
-    if part1 == "0000":
-        nb_length=(int(part2, base=2)//4)+1
-        number = ""
-        for _ in range(nb_length):                      #TODO
-            bits, program_string = step(program_string) #
-            number += bits                              #
-        push(int(number, base=2))
+    part1, part2 = char_bin
+    if part1 == '0' and not getting_number:
+        getting_number = True
+        parts_left = (int(part2, base=16)//4)+1
+        number += part2
+        parts_left -= 1
     else:
         match instruction:
-            case "0000":
-                
-            case "0001":
+            case '0':
                 pass
-            case "0010":
+            case '1':
+                pass
+            case '2':
                 a = s.pop()
                 b = s.pop()
                 push(a+b)
-            case "0011":
+            case '3':
                 a = s.pop()
                 b = s.pop()
                 push(b-a)
-            case "0100":
+            case '4':
                 a = s.pop()
                 b = s.pop()
                 push(a*b)
-            case "0101":
+            case '5':
                 a = s.pop()
                 b = s.pop()
                 push(b//a)
-            case "0110":
+            case '6':
                 a = s.pop()
                 b = s.pop()
                 push(a)
                 push(b)
-            case "0111":
+            case '7':
                 a = s.pop()
                 push(a)
                 push(a)
-            case "1000":
+            case '8':
                 pass
-            case "1001":
+            case '9':
                 pass
-            case "1010":
+            case 'a':
                 pass
-            case "1011":
+            case 'b':
                 pass
-            case "1100":
+            case 'c':
                 n = outpopint()
                 push(n)
-            case "1101":
+            case 'd':
                 n = outpopuni()
                 push(n)
-            case "1110":
+            case 'e':
                 outpopint()
-            case "1111":
+            case 'f':
                 outpopuni()
             case other:
-                pass
+                print('1')

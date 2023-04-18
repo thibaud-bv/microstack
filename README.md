@@ -32,18 +32,18 @@ There currently is a need for interaction between stacks.
 - `1`: pop top, factorial, push result
 - `2`: add top and second, pop both, push result
 - `3`: sub top from second, pop both, push result
-- `4`: mult top and second, pop both, push result
-- `5`: div top from second, pop both, push result
+- `4`: increment top
+- `5`: decrement top
 - `6`: swap top and second
-- `7`: push top on the stack (duplicate top)
+- `7`: duplicate top
 - `8`: go to matching `9` if top is 0 (Like a bf `[`)
 - `9`: go to matching `8` if top is not 0 (Like a bf `]`)
 - `a`: push input
 - `b`: switch to other stack
 - `c`: output the top of the stack
 - `d`: output the top of the stack as unicode
-- `e`: output the top of the stack and pop
-- `f`: output the top of the stack as unicode and pop
+- `e`: pop
+- `f`: pop from current current stack and push to other
 
 ### file extensions
 - .µ    : microstack program

@@ -1,3 +1,4 @@
+from math import factorial
 import sys
 if len(sys.argv) != 2:
     print("interpreter takes one (1) microstack program as input")
@@ -11,28 +12,65 @@ program_pointer = 0
 print(program)
 instruction = ""
 
-s = []
-s2 = []
+onS0 = True
+s0 = []
+s1 = []
 
 
 def step(p):
     return hex(p[:1])[:2], p[1:]
 
 
-def push(n):
-    s.append(n)
+def push(n: int | str):
+    """If string, pushes all characters individually
+
+    Empty string pushes 0"""
+    if type(n) == str:
+        if len(n) == 0:
+            n = chr(0)
+        for c in n:
+            if onS0:
+                s0.append(ord(c))
+            else:
+                s1.append(ord(c))
+    elif type(n) == int:
+        if onS0:
+            s0.append(n)
+        else:
+            s1.append(n)
+    else:
+        print("nuh uh")
 
 
-def outpopint():
-    n = s.pop() if s != [] else 0
-    print(n, end='')
-    return int(n)
+def pop() -> int:
+    """Returns the top of the stack and removes it
+
+    Returns 0 if stack is empty"""
+    return (s0.pop() if s0 != [] else 0) if onS0 else (s1.pop() if s1 != [] else 0)
 
 
-def outpopuni():
-    n = s.pop() if s != [] else 0
-    print(chr(n), end='')
-    return int(n)
+def inc():
+    """Does nothing if stack is empty"""
+    if onS0:
+        if s0 != []:
+            s0[-1] += 1
+    else:
+        if s1 != []:
+            s1[-1] += 1
+
+
+def dec():
+    """Does nothing if stack is empty"""
+    if onS0:
+        if s0 != []:
+            s0[-1] += 1
+    else:
+        if s1 != []:
+            s1[-1] += 1
+
+
+def switch():
+    onS0 = not onS0
 
 
 getting_number = False
@@ -52,50 +90,51 @@ while program_string != "":
         match instruction:
             case '0':
                 pass
-            case '1':
-                pass
-            case '2':
-                a = s.pop()
-                b = s.pop()
+            case '1':  # factorial
+                push(factorial(pop()))
+            case '2':  # addition
+                a = pop()
+                b = pop()
                 push(a+b)
-            case '3':
-                a = s.pop()
-                b = s.pop()
+            case '3':  # substraction
+                a = pop()
+                b = pop()
                 push(b-a)
-            case '4':
-                a = s.pop()
-                b = s.pop()
-                push(a*b)
-            case '5':
-                a = s.pop()
-                b = s.pop()
-                push(b//a)
-            case '6':
-                a = s.pop()
-                b = s.pop()
+            case '4':  # increment
+                inc()
+            case '5':  # decrement
+                dec()
+            case '6':  # swap top two elements
+                a = pop()
+                b = pop()
                 push(a)
                 push(b)
-            case '7':
-                a = s.pop()
+            case '7':  # duplicate top
+                a = pop()
                 push(a)
                 push(a)
-            case '8':
+            case '8':  # [
                 pass
-            case '9':
+            case '9':  # ]
                 pass
-            case 'a':
-                pass
-            case 'b':
-                pass
-            case 'c':
-                n = outpopint()
+            case 'a':  # push input
+                push(input())
+            case 'b':  # switch to other stack
+                switch()
+            case 'c':  # output top
+                n = pop()
                 push(n)
-            case 'd':
-                n = outpopuni()
+                print(n, end="")
+            case 'd':  # output top as unicode
+                n = pop()
                 push(n)
-            case 'e':
-                outpopint()
-            case 'f':
-                outpopuni()
-            case other:
-                print('1')
+                print(chr(n), end="")
+            case 'e':  # pop
+                pop()
+            case 'f':  # pop into other stack
+                a = pop()
+                switch()
+                push(a)
+                switch()
+            case other:  # ?
+                pass

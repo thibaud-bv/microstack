@@ -3,30 +3,30 @@
 
 ### Description
 
+In a microstack program, each character (roughly) represents two instructions.
+For example, `/`, U+002F, represents instructions `2` and `f`.
+
+Because of this, some instructions may not be easily readable or writable.
+
 Microstack uses two stacks as memory.
 
 Every instruction is an operation on one of those stacks.
 
-In a microstack program, each character (roughly) represents two instructions.
-For example, `/`, U+002F, represents instructions `2` and `f`
-
 ### Interpreter
 
-Not working yet.
+Not fully functionnal yet.
 
-Some instructions will probably change.
-
-There currently is a need for interaction between stacks.
+Some instructions may change.
 
 ### Instruction set (in hexadecimal)
 
 - `0x`: push the next `x`+1bit integer to the stack
 
-    `x` can only be `3`, `7`, `b` or `f`
+    `x` can only be `3`, `7`, `b` or `f` for technical reasons
 
     Example:
 
-    ```0f8bba```
+    ```0f8bba``` (`‹º` as characters)
 
     Pushes the `f`+1bit integer 35770 to the stack
 - `1`: pop top, factorial, push result
@@ -44,6 +44,8 @@ There currently is a need for interaction between stacks.
 - `d`: output the top of the stack as unicode
 - `e`: pop
 - `f`: pop from current current stack and push to other
+
+*Detailed description for each instruction coming soon*
 
 ### file extensions
 - .µ    : microstack program

@@ -12,31 +12,34 @@ class Interpreter:
         self.hex_program = ""
 
     def push(self, n: int | str):
-        """If only composed of digits, pushes the number,
-         else pushes all characters individually.
+        """
+        If n is an int, pushes n
 
-        Empty string pushes 0"""
+        If n is a str and decimal, pushes n converted to int
+
+        If n is a str and not decimal, pushes 1
+
+        If n is empty, pushes 0
+        """
+        number_to_push = 0
         if type(n) == str:
-            if len(n) == 0:
-                n = chr(0)
-            if n.isdecimal():
-                if self.onLeft:
-                    self.l_stack.append(int(n))
-                else:
-                    self.r_stack.append(int(n))
-            else :
-                for c in n:
-                    if self.onLeft:
-                        self.l_stack.append(ord(c))
-                    else:
-                        self.r_stack.append(ord(c))
-        elif type(n) == int:
-            if self.onLeft:
-                self.l_stack.append(n)
-            else:
-                self.r_stack.append(n)
+            if len(n) == 0:  # n == ""
+                number_to_push = 0
+            elif n.isdecimal():  # n == "79"
+                number_to_push = int(n)
+            elif len(n) >= 2 and n[0] == '-' and n[1:].isdecimal():  # n == "-45"
+                number_to_push = int(n)
+            else:  # n == "bob"
+                number_to_push = 1
+        elif type(n) == int:  # n == 15
+            number_to_push = n
+        else:  # invalid input pushes 1, this shouldn't happen but just in case
+            number_to_push = 1
+
+        if self.onLeft:
+            self.l_stack.append(number_to_push)
         else:
-            print("nuh uh")
+            self.r_stack.append(number_to_push)
 
     def hexify(self, ascii_program: str) -> str:
         hexed_program = ""
@@ -161,12 +164,12 @@ class Interpreter:
                 case '8':  # [
                     end = self.find_match_paren(program_pointer, hex_program)
                     a = self.peek()
-                    if (end != -1) and (a == 0):
+                    if (end > -1) and (a == 0):
                         program_pointer = end
                 case '9':  # ]
                     start = self.find_match_paren(program_pointer, hex_program)
                     a = self.peek()
-                    if (start != -1) and (a != 0):
+                    if (start > -1) and (a != 0):
                         program_pointer = start
                 case 'a':  # push input
                     """
@@ -190,9 +193,11 @@ class Interpreter:
                     self.switch()
                     self.push(a)
                     self.switch()
-                case other:  # ?
-                    pass
+                case other:  # There shouldn't be any way for this to happen
+                    print(f"Instruction {other} at position {program_pointer} doesn't exist: passing.")
+            # Go to the next instruction
             program_pointer += 1
+
 
 if len(sys.argv) != 2:
     print("interpreter takes one (1) microstack program as input")
@@ -204,5 +209,4 @@ program = program.read()
 interpreter = Interpreter()
 
 hex_program = interpreter.hexify(program)
-#print(hex_program)
 interpreter.run(hex_program)

@@ -41,12 +41,12 @@ class Interpreter:
         else:
             self.r_stack.append(number_to_push)
 
-    def hexify(self, ascii_program: str) -> str:
+    def parse(self, ascii_program: str) -> str:
         hexed_program = ""
         for c in ascii_program:
             hex_c = hex(ord(c))[2:]
             if len(hex_c) <= 2:
-                (2-len(hex_c))*'0'+hex_c
+                hex_c = (2-len(hex_c))*'0'+hex_c
                 hexed_program += hex_c
         return hexed_program
 
@@ -124,21 +124,16 @@ class Interpreter:
         while program_pointer < len(hex_program):
             instruction = hex_program[program_pointer]
             match instruction:
-                case '0':
-                    # Instruction 0 used as padding for the end
-                    # of the program, nothing left to do
-                    if program_pointer == len(hex_program)-1:
-                        return
-                    elif hex_program[program_pointer+1] in ['3', '7', 'b', 'f']:
-                        nb_bytes = (
-                            int(hex_program[program_pointer+1], base=16)+1)//4
-                        number_to_push = int(
-                            "".join(hex_program[program_pointer+2:program_pointer+2+nb_bytes]))
-                        self.push(number_to_push)
-                        program_pointer += (1+nb_bytes)
+                case '0':  # max / noop
+                    # do nothing if at the end of the program
+                    # for padding reasons
+                    if program_pointer != len(hex_program)-1:
+                        a = self.pop()
+                        b = self.peek()
+                        self.push(a)
+                        self.push(max(a, b))
                     else:
-                        pass  # noop, ignore, whatever this doesn't work
-
+                        return
                 case '1':  # factorial
                     self.push(factorial(self.pop()))
                 case '2':  # addition
@@ -194,7 +189,7 @@ class Interpreter:
                     self.push(a)
                     self.switch()
                 case other:  # There shouldn't be any way for this to happen
-                    print(f"Instruction {other} at position {program_pointer} doesn't exist: passing.")
+                    print(f"Instruction {other} at position {program_pointer} doesn't exist.")
             # Go to the next instruction
             program_pointer += 1
 
@@ -208,5 +203,5 @@ program = program.read()
 
 interpreter = Interpreter()
 
-hex_program = interpreter.hexify(program)
+hex_program = interpreter.parse(program)
 interpreter.run(hex_program)

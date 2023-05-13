@@ -3,14 +3,11 @@
 
 ### Description
 
-In a microstack program, each character (roughly) represents two instructions.
-For example, `/`, U+002F, represents instructions `2` and `f`.
+In a microstack program, each instruction is half a byte (one nibble), meaning one ASCII character (one byte) encodes two instructions.
 
-Because of this, some instructions may not be easily readable or writable.
+Because of this, code is better read and written in hexadecimal, for example with [HxD](https://mh-nexus.de/en/hxd/)
 
 Microstack uses two stacks as memory.
-
-Every instruction is an operation on one of those stacks.
 
 ### Interpreter
 
@@ -20,15 +17,7 @@ Some instructions may change.
 
 ### Instruction set (in hexadecimal)
 
-- `0x`: push the next `x`+1bit integer to the stack
-
-    `x` can only be `3`, `7`, `b` or `f` for technical reasons
-
-    Example:
-
-    ```0f8bba``` (`‹º` as characters)
-
-    Pushes the `f`+1bit integer 35770 to the stack
+- `0`: push max of two top values
 - `1`: pop top, factorial, push result
 - `2`: add top and second, pop both, push result
 - `3`: sub top from second, pop both, push result

@@ -1,0 +1,26 @@
+inc
+echo
+wnz
+    ---newline
+    dupe
+    dupe
+    sub
+    inc
+    inc
+    inc
+    fact
+    dec
+    dupe
+    add
+    echo unicode
+    pop
+    ---
+    dupe
+    pop other
+    add
+    echo
+    switch
+    pop other
+    switch
+    swap
+endloop

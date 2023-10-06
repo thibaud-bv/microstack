@@ -5,11 +5,12 @@ import sys
 class Interpreter:
 
     def __init__(self) -> None:
-        self.l_stack = []
-        self.r_stack = []
-        self.onLeft = True
-        self.program_pointer = 0
-        self.hex_program = ""
+        self.l_stack: list = []
+        self.r_stack: list = []
+        self.onLeft: bool = True
+        self.program_pointer: int = 0
+        self.hex_program: str = ""
+        self.hasOutputed: bool = False
 
     def push(self, n: int | str):
         """
@@ -87,25 +88,34 @@ class Interpreter:
     def switch(self):
         self.onLeft = not self.onLeft
 
+    def output(self, value: int, type: str, end_with: str):
+        if type == "number":
+            print(value, end=end_with)
+        elif type == "unicode":
+            print(chr(value), end=end_with)
+        self.hasOutputed = True
+
     def find_parens(self, s):
-        """Code by Baltasarq on StackOverflow:
+        # TODO : Find a better way to handle nested loops
+        """Code adapted from Baltasarq on StackOverflow:
         https://stackoverflow.com/a/29992065"""
         toret = {}
-        pstack = []
-        for i, c in enumerate(s):
-            if c == '8':
-                pstack.append(i)
-            elif c == '9':
-                if len(pstack) == 0:
-                    {}
-                toret[pstack.pop()] = i
+        parenthesis_stack = []
+        for index, character in enumerate(s):
+            if character == '8':
+                parenthesis_stack.append(index)
+            elif character == '9':
+                if len(parenthesis_stack) == 0:
+                    return {}
+                toret[parenthesis_stack.pop()] = index
 
-        if len(pstack) > 0:
+        if len(parenthesis_stack) > 0:
             return {}
 
         return toret
 
     def find_match_paren(self, index: int, expr: str) -> int:
+        # TODO : Find a better way to handle nested loops
         all_paren_indexes = self.find_parens(expr)
         instruction = expr[index]
         if index < 0 or index >= len(expr):
@@ -124,16 +134,11 @@ class Interpreter:
         while program_pointer < len(hex_program):
             instruction = hex_program[program_pointer]
             match instruction:
-                case '0':  # max / noop
-                    # do nothing if at the end of the program
-                    # for padding reasons
-                    if program_pointer != len(hex_program)-1:
-                        a = self.pop()
-                        b = self.peek()
-                        self.push(a)
-                        self.push(max(a, b))
-                    else:
-                        return
+                case '0':  # max
+                    a = self.pop()
+                    b = self.peek()
+                    self.push(a)
+                    self.push(max(a, b))
                 case '1':  # factorial
                     self.push(factorial(self.pop()))
                 case '2':  # addition
@@ -177,10 +182,10 @@ class Interpreter:
                     self.switch()
                 case 'c':  # output top
                     n = self.peek()
-                    print(n, end="")
+                    self.output(value=n, type="number", end_with="")
                 case 'd':  # output top as unicode
                     n = self.peek()
-                    print(chr(n), end="")
+                    self.output(value=n, type="unicode", end_with="")
                 case 'e':  # pop
                     self.pop()
                 case 'f':  # pop into other stack
@@ -192,6 +197,11 @@ class Interpreter:
                     print(f"Instruction {other} at position {program_pointer} doesn't exist.")
             # Go to the next instruction
             program_pointer += 1
+        # "implicit" output, if nothing was ever outputed,
+        # output the top of the stack as a number
+        if not self.hasOutputed:
+            self.output(self.peek(), "number", "\n")
+
 
 
 if len(sys.argv) != 2:

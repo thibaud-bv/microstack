@@ -7,13 +7,13 @@ In a microstack program, each instruction is half a byte (one nibble), meaning o
 
 Because of this, code is better read and written in hexadecimal, for example with [HxD](https://mh-nexus.de/en/hxd/)
 
-Microstack uses two stacks as memory.
+Microstack uses two stacks as memory, and a pointer to one of those stacks
 
 ### Interpreter
 
-Not fully functionnal yet.
+The interpreter isn't fully functionnal yet.
 
-Some instructions may change.
+Some instructions of the language may change.
 
 ### Instruction set (in hexadecimal)
 
@@ -27,7 +27,7 @@ Some instructions may change.
 - `7`: duplicate top
 - `8`: go to matching `9` if top is 0 (Like a bf `[`)
 - `9`: go to matching `8` if top is not 0 (Like a bf `]`)
-- `a`: push input
+- `a`: take input and push to the stack
 - `b`: switch to other stack
 - `c`: output the top of the stack
 - `d`: output the top of the stack as unicode
@@ -35,6 +35,15 @@ Some instructions may change.
 - `f`: pop from current current stack and push to other
 
 *Detailed description for each instruction coming soon*
+
+### Flags
+
+Flags can be used to alter the way the program will run, for example:
+
+- ignore the last nibble (as the instruction `0` is both `max` and padding)
+- other stuff probably
+
+Flags are not yet implemented.
 
 ### file extensions
 - .µ    : microstack program

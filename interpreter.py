@@ -64,7 +64,10 @@ class Interpreter:
         return (self.l_stack[-1] if self.l_stack != [] else 0) if self.onLeft else (self.r_stack[-1] if self.r_stack != [] else 0)
 
     def inc(self):
-        """Does nothing if stack is empty"""
+        """
+        Increments the stack by 1
+        Pushes 1 on the stack if it is empty
+        """
         if self.onLeft:
             if self.l_stack != []:
                 self.l_stack[-1] += 1
@@ -77,13 +80,20 @@ class Interpreter:
                 self.r_stack.append(1)
 
     def dec(self):
-        """Does nothing if stack is empty"""
+        """
+        Decrements the stack by 1
+        Pushes -1 on the stack if it is empty
+        """
         if self.onLeft:
             if self.l_stack != []:
-                self.l_stack[-1] += 1
+                self.l_stack[-1] -= 1
+            else:
+                self.l_stack.append(-1)
         else:
             if self.r_stack != []:
-                self.r_stack[-1] += 1
+                self.r_stack[-1] -= 1
+            else:
+                self.r_stack.append(-1)
 
     def switch(self):
         self.onLeft = not self.onLeft

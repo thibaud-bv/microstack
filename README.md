@@ -5,7 +5,7 @@
 
 In a microstack program, each instruction is half a byte (one nibble), meaning one ASCII character (one byte) encodes two instructions.
 
-Because of this, code is better read and written in hexadecimal, for example with [HxD](https://mh-nexus.de/en/hxd/)
+Because of this, code is better read and written directly in hexadecimal, for example with [HxD](https://mh-nexus.de/en/hxd/)
 
 Microstack uses two stacks as memory, and a pointer to one of those stacks
 
@@ -36,14 +36,13 @@ Some instructions of the language may change.
 
 *Detailed description for each instruction coming soon*
 
-### Flags
+### Flags (not yet implemented)
 
 Flags can be used to alter the way the program will run, for example:
 
 - ignore the last nibble (as the instruction `0` is both `max` and padding)
 - other stuff probably
 
-Flags are not yet implemented.
-
 ### file extensions
 - .µ    : microstack program
+- .µdoc : file for comments/explanations

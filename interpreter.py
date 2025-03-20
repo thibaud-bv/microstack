@@ -4,13 +4,14 @@ import sys
 
 class Interpreter:
 
-    def __init__(self) -> None:
+    def __init__(self, no_input) -> None:
         self.l_stack: list = []
         self.r_stack: list = []
         self.onLeft: bool = True
         self.program_pointer: int = 0
         self.hex_program: str = ""
         self.hasOutputed: bool = False
+        self.no_input: bool = no_input
 
     def push(self, n: int | str):
         """
@@ -102,7 +103,11 @@ class Interpreter:
         if type == "number":
             print(value, end=end_with)
         elif type == "unicode":
-            print(chr(value), end=end_with)
+            # accepted range for chr
+            if (value in range(0x110000)):
+                print(chr(value), end=end_with)
+            else:
+                print('$', end=end_with)
         self.hasOutputed = True
 
     def find_parens(self, s):
@@ -150,7 +155,12 @@ class Interpreter:
                     self.push(a)
                     self.push(max(a, b))
                 case '1':  # factorial
-                    self.push(factorial(self.pop()))
+                    a = self.pop()
+                    # accepted range for factorial
+                    if (a > 2147483647 or a < 0):
+                        self.push(-1)
+                    else:
+                        self.push(factorial(a))
                 case '2':  # addition
                     a = self.pop()
                     b = self.pop()
@@ -184,10 +194,13 @@ class Interpreter:
                 case 'a':  # push input
                     """
                     I still need to decide if input is always
-                    convert from text to int, or if
+                    converted from text to int, or if
                     it ignores all inputs except integers
                     """
-                    self.push(input())
+                    if (self.no_input):
+                        self.push(1)
+                    else:
+                        self.push(input())
                 case 'b':  # switch to other stack
                     self.switch()
                 case 'c':  # output top
@@ -213,15 +226,30 @@ class Interpreter:
             self.output(self.peek(), "number", "\n")
 
 
+if __name__ == "__main__":
+    def run(no_input: bool, do_bye_bye: bool):
+        program = open(file=sys.argv[1], encoding='ISO-8859-1', mode='r')
+        program = program.read()
 
-if len(sys.argv) != 2:
-    print("interpreter takes one (1) microstack program as input")
-    sys.exit()
+        interpreter = Interpreter(no_input=no_input)
 
-program = open(file=sys.argv[1], encoding='ISO-8859-1', mode='r')
-program = program.read()
+        hex_program = interpreter.parse(program)
+        
+        interpreter.run(hex_program)
+        if (do_bye_bye):
+            print("\nBye bye!")
 
-interpreter = Interpreter()
+    if (len(sys.argv) < 2):
+        print("interpreter takes one (1) microstack program as input, at least")
+        sys.exit()
+    
+    sys.set_int_max_str_digits(0)
+    no_input: bool = sys.argv.count("--no_input") == 1
+    do_loop: bool =  sys.argv.count("--loop") == 1
+    do_bye_bye: str = sys.argv.count("--bye_bye") == 1
 
-hex_program = interpreter.parse(program)
-interpreter.run(hex_program)
+    if (do_loop):
+        while(1):
+            run(no_input=no_input, do_bye_bye=do_bye_bye)
+    else:
+        run(no_input=no_input, do_bye_bye=do_bye_bye)
